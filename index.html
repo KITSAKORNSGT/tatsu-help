@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title >ศูนย์บริการช่วยเหลือ | Tatsu</title>
+  <link rel="icon" href="images/tap1.png" type="image/png">
+  <style>
+   /* For larger screens like PC */
+body {
+  font-family: Arial, sans-serif;
+  background: url('images/bg.png') no-repeat center center fixed;
+  background-size: cover;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  height: 100vh; /* Ensure the body takes full viewport height */
+  padding-top: 80px;
+  box-sizing: border-box;
+}
+
+/* For smaller screens like mobile and tablet */
+@media (max-width: 650px) {
+  .container {
+  text-align: center;
+  flex: 1;
+  margin-bottom: 40px;
+  padding-bottom: 20px; /* Add space at the bottom of the content */
+}
+
+  /* Adjust header to ensure it fits on smaller screens */
+  header {
+    padding: 10px;
+    align-items: center;
+  }
+
+  /* Adjust grid to stack cards vertically on small screens */
+  .grid {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+  }
+
+  /* Make cards take up the full width on small screens */
+  .card {
+    max-width: 100%;
+    width: 100%;
+  }
+
+  /* Adjust the row layout to single column on small screens */
+  .row {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  /* For small text and icons */
+  .card h2 {
+    font-size: 16px;
+  }
+
+  .card p {
+    font-size: 12px;
+  }
+}
+
+/* For larger tablets and desktop (iPad landscape and up) */
+@media (min-width: 650px) {
+  .row-1 {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+  }
+
+  .row-2 {
+    display: flex;
+    justify-content: flex-start;
+    margin-left: 20px;
+  }
+
+  /* Ensure cards are not stretched on larger screens */
+  .card {
+    max-width: 200px;
+    width: auto;
+  }
+}
+
+    /* ปรับการจัดตำแหน่ง header และโลโก้ */
+header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      z-index: 1000;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px 70px;
+      background-color: transparent;
+      box-shadow: none;
+      transition: background-color 0.3s, box-shadow 0.3s;
+    }
+
+
+/* โลโก้ซ้ายสุด */
+.logo {
+  display: flex;
+  align-items: center;
+}
+
+.logo img {
+  height: 40px;
+  margin-left: 10px;
+}
+
+
+    header a {
+      color: white;
+      text-decoration: none;
+      font-size: 14px;
+      margin-left: 20px;
+      margin-right: 10px;
+    }
+
+    header a:hover {
+      text-decoration: underline;
+      color: #f0a500;
+    }
+
+    .container {
+  text-align: center;
+  flex: 1;
+  margin-bottom: 40px;
+  padding-bottom: 20px; /* Add space at the bottom of the content */
+}
+
+    h1 {
+      position: relative;
+      margin-bottom: 20px;
+      text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.8);
+      font-size: 48px;
+      z-index: 999;
+      background-color: transparent;
+      padding: 10px;
+    }
+
+    .search-bar {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 40px;
+    }
+
+    .search-bar input {
+      padding: 10px;
+      width: 300px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+      background-color: #222;
+      color: white;
+    }
+
+    .grid {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .row {
+      display: flex;
+      justify-content: space-between;
+      gap: 20px;
+    }
+
+    .row-1 {
+      flex-wrap: wrap;
+    }
+
+    .row-2 {
+      justify-content: flex-start;
+      margin-left: 20px;
+    }
+
+    .card {
+      flex: 1;
+      max-width: 200px;
+      background-color: transparent;
+      border-radius: 10px;
+      text-align: center;
+      box-shadow: none;
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+
+    .card img {
+      width: 128px;
+      margin: 20px auto;
+      transition: transform 0.3s;
+    }
+
+    .card:hover img {
+      transform: translateY(-10px);
+    }
+
+    .card h2 {
+      margin: 0;
+      font-size: 18px;
+      color: white;
+      position: relative;
+      display: inline-block;
+    }
+
+    .card h2::after {
+      content: ' →';
+      color: white;
+      font-size: 20px;
+      margin-left: 8px;
+      transition: color 0.3s;
+    }
+
+    .card:hover h2::after {
+      color: #1E90FF;
+    }
+
+    .card p {
+      font-size: 14px;
+      color: #ccc;
+    }
+
+    .card a {
+      display: block;
+      text-decoration: none;
+      color: inherit;
+      padding: 10px;
+    }
+
+    footer {
+  width: 100%;
+  background-color: #000;
+  color: white;
+  text-align: center;
+  padding: 10px;
+  font-size: 14px;
+  margin-top: auto; /* This will push the footer to the bottom */
+}
+
+
+  </style>
+</head>
+<body>
+  <header id="header">
+  <div class="logo">
+    <img src="images/logo.png" alt="Logo">
+  </div>
+</header>
+
+  <div class="container">
+    <h1>คู่มือสำหรับผู้เริ่มต้น</h1>
+    <div class="search-bar">
+      <input type="text" placeholder="Search">
+    </div>
+    <div class="grid">
+      <!-- Row 1 -->
+      <div class="row row-1">
+        <div class="card"> <!-- Card 1 -->
+          <a href="docs.html">
+            <img src="images/image1.jpg" alt="Tatsugotchi">
+            <h2>สัตว์เลี้ยง & ออกเเบบบ้าน</h2>
+            <p>ดูแลสัตว์เลี้ยงใน Discord ของคุณ! ออกแบบบ้านและสร้างสถานรับเลี้ยงสัตว์</p>
+          </a>
+        </div>
+        <div class="card"> <!-- Card 2 -->
+          <a href="docs.html">
+            <img src="images/image2.jpg" alt="Items & Currency">
+            <h2>ไอเท็ม & สกุลเงิน</h2>
+            <p>หาเงิน, ใช้ซื้อของ ,จะแลกเปลี่ยนหรือเก็บไว้ก็ขึ้นอยู่กับคุณ!</p>
+          </a>
+        </div>
+        <div class="card"> <!-- Card 3 -->
+          <a href="docs.html">
+            <img src="images/image3.jpg" alt="Server Rewards Setup">
+            <h2>ตั้งค่ารางวัลในเซิร์ฟเวอร์</h2>
+            <p>เลเวลของบทบาท เศรษฐกิจในเซิร์ฟเวอร์ ร้านค้าแลกรางวัล กระดานคะแนน และอื่น ๆ อีกมากมาย!</p>
+          </a>
+        </div>
+        <div class="card"> <!-- Card 4 -->
+          <a href="docs.html">
+            <img src="images/image4.jpg" alt="Server Management">
+            <h2>จัดการเซิร์ฟเวอร์</h2>
+            <p>เพิ่มฟีเจอร์จัดการเซิร์ฟเวอร์อัตโนมัติ!</p>
+          </a>
+        </div>
+      </div>
+
+      <!-- Row 2 -->
+      <div class="row row-2">
+        <div class="card"> <!-- Card 5 -->
+          <a href="docs.html">
+            <img src="images/image5.jpg" alt="Getting Started">
+            <h2>เริ่มต้นใช้งาน</h2>
+            <p>มาทำความรู้จักกับพื้นฐานกันเถอะ!</p>
+          </a>
+        </div>
+        <div class="card"> <!-- Card 6 -->
+          <a href="docs.html">
+            <img src="images/image6.jpg" alt="Profile Settings">
+            <h2>การตั้งค่าโปรไฟล์</h2>
+            <p>ปรับแต่งโปรไฟล์ของคุณ, ตั้งค่าบัญชีของคุณ</p>
+          </a>
+        </div>
+      </div>
+
+      <!-- Row 3 (New Cards) -->
+      <div class="row row-3" style="justify-content: center; gap: 40px; margin-top: 40px;">
+        <div class="card" style="max-width: 300px; display: flex; flex-direction: column; justify-content: center; align-items: center;">
+          <a href="index.html" style="display: flex; flex-direction: column; align-items: center; width: 100%;">
+            <img src="images/tap1.png" alt="Beginner's Guide" style="width: 45px; margin-bottom: 10px;">
+            <h2 style="font-size: 16px;">คู่มือสำหรับผู้เริ่มต้น</h2>
+            <p style="font-size: 12px;">เรียนรู้วิธีตั้งค่า Tatsu สำหรับเซิร์ฟเวอร์ Discord ของคุณ!</p>
+          </a>
+        </div>
+        <div class="card" style="max-width: 300px; display: flex; flex-direction: column; justify-content: center; align-items: center;">
+          <a href="https://discord.com/invite/tatsu" style="display: flex; flex-direction: column; align-items: center; width: 100%;">
+            <img src="images/tap2.gif" alt="Can't find what you're after?" style="width: 45px; margin-bottom: 10px;">
+            <h2 style="font-size: 16px;">ไม่พบสิ่งที่คุณต้องการใช่ไหม?</h2>
+            <p style="font-size: 12px;">
+              คลิกที่นี่เพื่อเข้าร่วมเซิร์ฟเวอร์ Discord ของเราและรับความช่วยเหลือจากชุมชนของเรา!</p>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <p>เเปลไทยทั้งหมด โดย Kitsakorn</p>
+  </footer>
+
+<script>
+
+    window.onscroll = function() { changeHeader() };
+
+    function changeHeader() {
+      var header = document.getElementById("header");
+      if (document.body.scrollTop > 50 || document.documentElement.scrollTop > 50) {
+        header.style.backgroundColor = "rgba(0, 0, 0, 0.7)";
+        header.style.boxShadow = "0 4px 6px rgba(0, 0, 0, 0.5)";
+      } else {
+        header.style.backgroundColor = "transparent";
+        header.style.boxShadow = "none";
+      }
+    }
+  </script>
+
+</body>
+</html>

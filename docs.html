@@ -1,0 +1,778 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tatsugotchi Documentation</title>
+  <style>
+  body {
+  font-family: Arial, sans-serif;
+  background: url('images/bg.png') no-repeat center center fixed;
+  background-size: cover;
+  color: #adbac7;
+  display: flex;
+  min-height: 100vh;
+  margin: 0;
+  box-sizing: border-box;
+  padding: 0;
+  overflow-x: hidden; /* ซ่อนการเลื่อนซ้ายขวา */
+}
+
+header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1000;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 30px;
+  background-color: #000;
+  color: white;
+  box-shadow: none;
+  transition: background-color 0.3s, box-shadow 0.3s;
+}
+
+.logo {
+  width: 160px;
+  height: auto;
+  margin-right: 20px;
+}
+
+header .search-toggle-container {
+  display: flex;
+  align-items: center;
+}
+
+header .search-toggle-container button {
+  margin-right: 10px; /* ลด margin เพื่อขยับปุ่มมาทางซ้าย */
+}
+
+header span {
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+#toggle-sidebar, #toggle-search {
+  background-color: transparent;
+  color: #48be89;
+  border: 2px solid #48be89;
+  border-radius: 8px;
+  padding: 10px 20px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+#toggle-sidebar {
+  margin-right: 70px; /* ลด margin เพื่อขยับปุ่มมาทางซ้าย */
+}
+
+#toggle-sidebar:hover, #toggle-search:hover {
+  background-color: #48be89;
+  color: white;
+}
+
+.hidden {
+  display: none;
+}
+
+a {
+  color: #48be89;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+.main-container {
+  display: flex;
+  flex: 1;
+  margin-top: 90px;
+  height: calc(100vh - 90px); /* เพิ่มความสูงให้เต็มหน้าจอ */
+  transition: margin-left 0.3s ease; /* เพิ่ม transition เพื่อให้เนื้อหาเลื่อน */
+}
+
+.main-container.sidebar-open {
+  margin-left: 240px; /* ขยับเนื้อหาเมื่อ sidebar เปิด */
+}
+
+/* เพิ่มการกำหนดค่า animation */
+@keyframes slideIn {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideOut {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-100%);
+  }
+}
+
+.sidebar {
+  width: 300px; /* ปรับความกว้างของ sidebar */
+  background-color: #191919; /* เปลี่ยนสีพื้นหลังให้ทึบ */
+  color: white;
+  padding: 20px;
+  box-sizing: border-box;
+  height: calc(100vh - 90px); /* ปรับความสูงของ sidebar */
+  position: fixed; /* เปลี่ยนจาก sticky เป็น fixed */
+  top: 90px; /* ปรับจาก top: 0 เพื่อให้ไม่ทับ header */
+  left: 0; /* เพิ่มเพื่อให้ sidebar อยู่ทางซ้าย */
+  overflow-y: auto; /* เพิ่ม overflow-y: auto; เพื่อให้เลื่อนได้ */
+  border-radius: 8px;
+  transform: translateX(-100%); /* เริ่มต้นนอกหน้าจอ */
+  transition: transform 0.3s ease; /* เพิ่ม transition เพื่อให้ sidebar เลื่อน */
+  z-index: 1100; /* เพิ่ม z-index เพื่อให้ sidebar อยู่บนสุด */
+}
+
+.sidebar.open {
+  transform: translateX(0); /* เลื่อนเข้ามา */
+}
+
+.sidebar::-webkit-scrollbar {
+  width: 12px; /* ความกว้างของ scrollbar */
+}
+
+.sidebar::-webkit-scrollbar-track {
+  background: #2c2c2c; /* สีพื้นหลังของ track */
+  border-radius: 10px;
+}
+
+.sidebar::-webkit-scrollbar-thumb {
+  background-color: #48be89; /* สีของ scrollbar */
+  border-radius: 10px;
+  border: 3px solid #2c2c2c; /* ขอบของ scrollbar */
+}
+
+.sidebar::-webkit-scrollbar-thumb:hover {
+  background-color: #36a371; /* สีของ scrollbar เมื่อ hover */
+}
+
+.sidebar h2 {
+  color: #fff;
+  margin-top: 0;
+}
+
+.sidebar a {
+  color: white;
+  text-decoration: none;
+  display: block;
+  margin: 10px 0;
+  padding: 8px 12px;
+  border-radius: 5px;
+  transition: background-color 0.3s;
+}
+
+.sidebar a:hover {
+  background-color: #48be89;
+}
+
+.active {
+  background-color: #48be89;
+  color: white;
+}
+
+.content {
+  flex: 1;
+  margin-left: 70px;
+  padding: 70px;
+  background: url('images/bg.png') no-repeat center center;
+  background-size: cover;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  overflow-y: auto;
+}
+
+.content h1, .content h2, .content h3 {
+  color: #fff;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.content p {
+  line-height: 1.6;
+  font-size: 1rem;
+  margin-bottom: 15px;
+}
+
+.content ul {
+  margin-left: 20px;
+}
+
+.sub-menu, .sub-sub-menu {
+  margin-left: 20px;
+}
+
+.sub-menu a {
+  font-size: 0.9rem;
+}
+
+.sub-sub-menu a {
+  font-size: 0.8rem;
+}
+
+.breadcrumbs {
+  font-size: 0.9rem;
+  margin-bottom: 15px;
+  color: #48be89;
+}
+
+.breadcrumbs a {
+  text-decoration: none;
+}
+
+.breadcrumbs span {
+  color: #adbac7;
+}
+
+.sub-menu {
+  display: block; /* This makes the submenus visible */
+}
+
+/* When the submenu is open, style accordingly (optional) */
+.sub-menu.open {
+  display: block;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+/* Button Styling */
+.nav-buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+
+.nav-buttons button {
+  background-color: transparent;
+  color: #48be89;
+  padding: 10px 20px;
+  border: 2px solid #48be89;
+  border-radius: 8px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.nav-buttons button:hover {
+  background-color: #48be89;
+  color: white;
+}
+
+/* สไตล์สำหรับเส้นกั้น */
+.divider {
+  border: 0;
+  height: 1px;
+  background: #adbac7;
+  margin: 40px 0;
+}
+
+.content::-webkit-scrollbar {
+  width: 12px; /* ความกว้างของ scrollbar */
+}
+
+.content::-webkit-scrollbar-track {
+  background: #2c2c2c; /* สีพื้นหลังของ track */
+  border-radius: 10px;
+}
+
+.content::-webkit-scrollbar-thumb {
+  background-color: #48be89; /* สีของ scrollbar */
+  border-radius: 10px;
+  border: 3px solid #2c2c2c; /* ขอบของ scrollbar */
+}
+
+.content::-webkit-scrollbar-thumb:hover {
+  background-color: #36a371; /* สีของ scrollbar เมื่อ hover */
+}
+
+/* เพิ่มการทำงานของ animation */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+.content-section {
+  animation-duration: 0.5s; /* ระยะเวลาของ animation */
+  animation-fill-mode: both; /* ให้ animation ทำการเติมเต็ม */
+}
+
+@media (max-width: 768px) {
+
+  .content {
+  flex: 1;
+  margin-left: 10px;
+  padding: 10px;
+}
+  header {
+    padding: 10px;
+  }
+  
+  .logo {
+    width: 150px;
+    height: auto;
+    margin-left: 20px;
+  }
+  
+  header .search-toggle-container {
+    flex-direction: column;
+    align-items: flex-end;
+  }
+  
+  #toggle-sidebar {
+    margin-right: 20px; /* ปรับ margin ของปุ่ม 3 ขีด */
+    margin-top: 10px;
+    display: block; /* แสดงปุ่มในมือถือ */
+  }
+  
+  .sidebar {
+    width: 75%; /* ให้ sidebar กว้างเต็มหน้าจอบนมือถือ */
+    height: calc(100vh - 50px); /* ปรับความสูงของ sidebar บนมือถือ */
+    top: 76px; /* ปรับจาก top: 90px เพื่อให้ไม่ทับ header */
+  }
+
+  .main-container {
+    margin-left: 0; /* รีเซ็ต margin-left บนมือถือ */
+  }
+
+  .main-container.sidebar-open {
+    margin-left: 0; /* รีเซ็ต margin-left เมื่อ sidebar เปิดในมือถือ */
+  }
+}
+  </style>
+</head>
+<body>
+  <header>
+    <a href="index.html"><img src="images/logo.png" alt="Logo" class="logo"></a>
+    <button id="toggle-sidebar" onclick="toggleSidebar()">☰</button>
+  </header>
+
+  <div class="main-container sidebar-open">
+    <!-- Sidebar -->
+    <div class="sidebar open">
+      <img src="images/logo.png" alt="Logo" class="logo">
+
+      <a href="javascript:void(0)" class="menu-item" onclick="showContent(event, 'getting-started', '')">Getting Started</a>
+
+      <div class="sub-menu">
+        <a href="javascript:void(0)" class="submenu-item" onclick="showContent(event, 'getting-active-switching', 'How to earn credits and tokens')">How to earn credits and tokens</a>
+        <a href="javascript:void(0)" class="submenu-item" onclick="showContent(event, 'getting-tatsugotchi-play', 'How to play Tatsugotchi')">How to play Tatsugotchi</a>
+      </div>
+
+      <a href="javascript:void(0)" class="menu-item" onclick="showContent(event, 'homeing-main', 'Personal Housing')">Personal Housing</a>
+
+      <div class="sub-menu">
+
+        <a href="javascript:void(0)" class="submenu-item" onclick="showContent(event, 'personal-housing-custom', 'Customizing your House')">Customizing your House</a>
+
+      </div>
+
+      <a href="javascript:void(0)" class="menu-item" onclick="showContent(event, 'items-currency', 'Items & Currency')">Items & Currency</a>
+
+      <div class="sub-menu">
+
+        <a href="javascript:void(0)" class="submenu-item" onclick="showContent(event, 'create-server-item', 'How to create a server item')">How to create a server item</a>
+
+      </div>
+
+      <a href="javascript:void(0)" class="menu-item" onclick="showContent(event, 'server-rewards', 'Server Rewards Setup')">Server Rewards Setup</a>
+
+      <div class="sub-menu">
+
+        <a href="javascript:void(0)" class="submenu-item" onclick="showContent(event, 'set-up-chat-level-role', 'How to set up chat activity roles / leveled roles')">How to set up chat activity roles / leveled roles</a>
+
+      </div>
+
+      <a href="javascript:void(0)" class="menu-item" onclick="showContent(event, 'server-management', 'Server Management')">Server Management</a>
+
+      <div class="sub-menu">
+        <a href="javascript:void(0)" class="submenu-item" onclick="showContent(event, 'management-reaction-roles', 'How to set up reaction roles')">How to set up reaction roles</a>
+        <a href="javascript:void(0)" class="submenu-item" onclick="showContent(event, 'management-selfroles', 'How to set up selfroles')">How to set up selfroles</a>
+        <a href="javascript:void(0)" class="submenu-item" onclick="showContent(event, 'management-give-new-users-role', 'Give new users a role when they join your server')">Give new users a role when they join your server</a>
+      </div>
+
+      <a href="javascript:void(0)" class="menu-item" onclick="showContent(event, 'profile-settings', 'Profile Settings')">Profile Settings</a>
+
+      <div class="sub-menu">
+        <a href="javascript:void(0)" class="submenu-item" onclick="showContent(event, 'profile-wallet-card-background', 'Changing your wallet card background')">Changing your wallet card background</a>
+        <a href="javascript:void(0)" class="submenu-item" onclick="showContent(event, 'profile-rank-card-background', 'Changing your rank card background')">Changing your rank card background</a>
+        <a href="javascript:void(0)" class="submenu-item" onclick="showContent(event, 'profile-level-up-card-background', 'Changing your level-up card background')">Changing your level-up card background</a>
+        <a href="javascript:void(0)" class="submenu-item" onclick="showContent(event, 'profile-profile-card-background', 'Changing your profile card background')">Changing your profile card background</a>
+      </div>
+
+    </div>
+
+    <!-- Content -->
+    <div class="content">
+      <div id="search-bar" class="search-bar hidden">
+        <input id="search-box" type="text" placeholder="Search..." oninput="searchContent()">
+      </div>
+      <div class="breadcrumbs">
+        <a href="index.html">Home</a> > <span>Getting Started</span>
+      </div>
+    
+      <!-- Getting Started Section -->
+      <div id="getting-started" class="content-section">
+        <h1>Getting Started</h1>
+        <p>Welcome to Tatsugotchi! Here's how to get started...</p>
+        <p>Welcome to Tatsugotchi! Here's how to get started...</p>
+        <p>Welcome to Tatsugotchi! Here's how to get started...</p>
+        <p>Welcome to Tatsugotchi! Here's how to get started...</p>
+        <p>Welcome to Tatsugotchi! Here's how to get started...</p>
+        <p>Welcome to Tatsugotchi! Here's how to get started...</p>
+        <p>Welcome to Tatsugotchi! Here's how to get started...</p>
+        <p>Welcome to Tatsugotchi! Here's how to get started...</p>
+        <p>Welcome to Tatsugotchi! Here's how to get started...</p>
+        <p>Welcome to Tatsugotchi! Here's how to get started...</p>
+        <p>Welcome to Tatsugotchi! Here's how to get started...</p>
+        <p>Welcome to Tatsugotchi! Here's how to get started...</p>
+        <p>Welcome to Tatsugotchi! Here's how to get started...</p>
+        <p>Welcome to Tatsugotchi! Here's how to get started...</p>
+        <hr class="divider">
+        <div class="nav-buttons">
+          <button onclick="showContent(event, 'getting-started', '')">🏠︎</button>
+          <button onclick="showContent(event, 'getting-active-switching', 'How to earn credits and tokens')">Next</button>
+        </div>
+      </div>
+      <div id="getting-active-switching" class="content-section" style="display: none;">
+        <h1>How to earn credits and tokens</h1>
+        <p>Learn how to switch your active pet...</p>
+        <hr class="divider">
+        <div class="nav-buttons">
+          <button onclick="showContent(event, 'getting-started', '')">Previous</button>
+          <button onclick="showContent(event, 'getting-tatsugotchi-play', 'How to play Tatsugotchi')">Next</button>
+        </div>
+      </div>
+      <div id="getting-tatsugotchi-play" class="content-section" style="display: none;">
+        <h1>How to play Tatsugotchi</h1>
+        <p>Learn how to play Tatsugotchi...</p>
+        <hr class="divider">
+        <div class="nav-buttons">
+          <button onclick="showContent(event, 'getting-active-switching', 'How to earn credits and tokens')">Previous</button>
+          <button onclick="showContent(event, 'homeing-main', 'Personal Housing')">Next</button>
+        </div>
+      </div>
+    
+      <!-- Personal Housing Section -->
+      <div id="homeing-main" class="content-section" style="display: none;">
+        <h1>Personal Housing</h1>
+        <p>Customize your personal housing for your pet.</p>
+        <hr class="divider">
+        <div class="nav-buttons">
+          <button onclick="showContent(event, 'getting-tatsugotchi-play', 'How to play Tatsugotchi')">Previous</button>
+          <button onclick="showContent(event, 'personal-housing-custom', 'Customizing your House')">Next</button>
+        </div>
+      </div>
+      <div id="personal-housing-custom" class="content-section" style="display: none;">
+        <h1>Customizing your House</h1>
+        <p>Learn how to customize your house for a personalized look.</p>
+        <hr class="divider">
+        <div class="nav-buttons">
+          <button onclick="showContent(event, 'homeing-main', 'Personal Housing')">Previous</button>
+          <button onclick="showContent(event, 'items-currency', 'Items & Currency')">Next</button>
+        </div>
+      </div>
+    
+      <!-- Items & Currency Section -->
+      <div id="items-currency" class="content-section" style="display: none;">
+        <h1>Items & Currency</h1>
+        <p>Understand the items and currency system in Tatsugotchi.</p>
+        <hr class="divider">
+        <div class="nav-buttons">
+          <button onclick="showContent(event, 'personal-housing-custom', 'Customizing your House')">Previous</button>
+          <button onclick="showContent(event, 'create-server-item', 'How to create a server item')">Next</button>
+        </div>
+      </div>
+
+      <div id="create-server-item" class="content-section" style="display: none;">
+        <h1>How to create a server item</h1>
+        <p>Understand the items and currency system in Tatsugotchi.</p>
+        <hr class="divider">
+        <div class="nav-buttons">
+          <button onclick="showContent(event, 'items-currency', 'Items & Currency')">Previous</button>
+          <button onclick="showContent(event, 'server-rewards', 'Server Rewards Setup')">Next</button>
+        </div>
+      </div>
+    
+      <!-- Server Rewards Section -->
+      <div id="server-rewards" class="content-section" style="display: none;">
+        <h1>Server Rewards Setup</h1>
+        <p>Set up rewards for server activity to encourage engagement.</p>
+        <hr class="divider">
+        <div class="nav-buttons">
+          <button onclick="showContent(event, 'create-server-item', 'How to create a server item')">Previous</button>
+          <button onclick="showContent(event, 'set-up-chat-level-role', 'How to set up chat activity roles / leveled roles')">Next</button>
+        </div>
+      </div>
+    
+    <div id="set-up-chat-level-role" class="content-section" style="display: none;">
+        <h1>How to set up chat activity roles / leveled roles</h1>
+        <p>Assign leveled roles to users based on their chat activity. Configure roles in your server settings and set thresholds for each level to keep users engaged.</p>
+        <hr class="divider">
+        <div class="nav-buttons">
+            <button onclick="showContent(event, 'server-rewards', 'Server Rewards Setup')">Previous</button>
+            <button onclick="showContent(event, 'server-management', 'Server Management')">Next</button>
+        </div>
+    </div>
+    
+      <!-- Server Management Section -->
+      <div id="server-management" class="content-section" style="display: none;">
+        <h1>Server Management</h1>
+        <p>Manage your server efficiently with these tools.</p>
+        <hr class="divider">
+        <div class="nav-buttons">
+          <button onclick="showContent(event, 'set-up-chat-level-role', 'How to set up chat activity roles / leveled roles')">Previous</button>
+          <button onclick="showContent(event, 'management-reaction-roles', 'How to set up reaction roles')">Next</button>
+        </div>
+      </div>
+
+      <div id="management-reaction-roles" class="content-section" style="display: none;">
+        <h1>How to set up reaction roles</h1>
+        <p>Reaction roles allow users to assign roles to themselves by reacting to a message. Use the <code>!reactionrole</code> command and follow the setup wizard to configure the roles and reactions.</p>
+        <hr class="divider">
+        <div class="nav-buttons">
+            <button onclick="showContent(event, 'server-management', 'Server Management')">Previous</button>
+            <button onclick="showContent(event, 'management-selfroles', 'How to set up selfroles')">Next</button>
+        </div>
+    </div>
+    
+    <div id="management-selfroles" class="content-section" style="display: none;">
+        <h1>How to set up selfroles</h1>
+        <p>Selfroles enable users to choose roles themselves from a predefined list. Set these up in the server settings to give users more control over their roles.</p>
+        <hr class="divider">
+        <div class="nav-buttons">
+            <button onclick="showContent(event, 'management-reaction-roles', 'How to set up reaction roles')">Previous</button>
+            <button onclick="showContent(event, 'management-give-new-users-role', 'Give new users a role when they join your server')">Next</button>
+        </div>
+    </div>
+    
+    <div id="management-give-new-users-role" class="content-section" style="display: none;">
+        <h1>Give new users a role when they join your server</h1>
+        <p>Welcome new users by automatically assigning them a role upon joining. Use the server management settings to enable this feature and configure the default role.</p>
+        <hr class="divider">
+        <div class="nav-buttons">
+            <button onclick="showContent(event, 'management-selfroles', 'How to set up selfroles')">Previous</button>
+            <button onclick="showContent(event, 'profile-settings', 'Profile Settings')">Next</button>
+        </div>
+    </div>
+    
+      <!-- Profile Settings Section -->
+      <div id="profile-settings" class="content-section" style="display: none;">
+        <h1>Profile Settings</h1>
+        <p>Personalize your profile and manage settings to suit your preferences.</p>
+        <hr class="divider">
+        <div class="nav-buttons">
+          <button onclick="showContent(event, 'management-give-new-users-role', 'Give new users a role when they join your server')">Previous</button>
+          <button onclick="showContent(event, 'profile-wallet-card-background', 'Changing your wallet card background')">Next</button>
+        </div>
+      </div>
+
+      <div id="profile-wallet-card-background" class="content-section" style="display: none;">
+        <h1>Changing your wallet card background</h1>
+        <p>You can personalize your wallet card by selecting a custom background. Visit the profile settings page and navigate to the "Wallet Card" section to upload your design or choose from the available presets.</p>
+        <hr class="divider">
+        <div class="nav-buttons">
+            <button onclick="showContent(event, 'profile-settings', 'Profile Settings')">Previous</button>
+            <button onclick="showContent(event, 'profile-rank-card-background', 'Changing your rank card background')">Next</button>
+        </div>
+    </div>
+    
+    <div id="profile-rank-card-background" class="content-section" style="display: none;">
+        <h1>Changing your rank card background</h1>
+        <p>Your rank card background reflects your progress and achievements. Go to the "Rank Card" section in profile settings to select or customize the background that best represents your style.</p>
+        <hr class="divider">
+        <div class="nav-buttons">
+            <button onclick="showContent(event, 'profile-wallet-card-background', 'Changing your wallet card background')">Previous</button>
+            <button onclick="showContent(event, 'profile-level-up-card-background', 'Changing your level-up card background')">Next</button>
+        </div>
+    </div>
+    
+    <div id="profile-level-up-card-background" class="content-section" style="display: none;">
+        <h1>Changing your level-up card background</h1>
+        <p>Customize the background displayed when you level up. Go to the "Level-Up Card" settings and pick a background to make leveling up more exciting!</p>
+        <hr class="divider">
+        <div class="nav-buttons">
+            <button onclick="showContent(event, 'profile-rank-card-background', 'Changing your rank card background')">Previous</button>
+            <button onclick="showContent(event, 'profile-profile-card-background', 'Changing your profile card background')">Next</button>
+        </div>
+    </div>
+    
+    <div id="profile-profile-card-background" class="content-section" style="display: none;">
+        <h1>Changing your profile card background</h1>
+        <p>Your profile card is the first thing others see. Head over to the "Profile Card" section in settings and select a background that truly represents you!</p>
+        <hr class="divider">
+        <div class="nav-buttons">
+            <button onclick="showContent(event, 'profile-level-up-card-background', 'Changing your level-up card background')">Previous</button>
+        </div>
+    </div>
+
+    </div>
+
+  <script>
+
+function toggleSidebar() {
+  const sidebar = document.querySelector('.sidebar');
+  const mainContainer = document.querySelector('.main-container');
+  sidebar.classList.toggle('open');
+  mainContainer.classList.toggle('sidebar-open');
+}
+
+function smoothScroll(target) {
+  document.querySelector(target).scrollIntoView({
+    behavior: 'smooth'
+  });
+}
+// Function to handle changing of content and active state (clicked item)
+function showContent(event, sectionId, menuName) {
+  // Remove active class from all menu items
+  const allMenuItems = document.querySelectorAll('.menu-item, .submenu-item');
+  allMenuItems.forEach(item => item.classList.remove('active'));
+
+  // Add active class to clicked item
+  event.target.classList.add('active');
+
+  // Hide all content sections with fadeOut animation
+  const allContentSections = document.querySelectorAll('.content-section');
+  allContentSections.forEach(section => {
+    section.style.animationName = 'fadeOut';
+    setTimeout(() => {
+      section.style.display = 'none';
+    }, 500); // ระยะเวลาในการซ่อนเนื้อหา
+  });
+
+  // Show the selected content section with fadeIn animation
+  const selectedSection = document.getElementById(sectionId);
+  setTimeout(() => {
+    selectedSection.style.display = 'block';
+    selectedSection.style.animationName = 'fadeIn';
+  }, 500); // ระยะเวลาในการแสดงเนื้อหาใหม่
+
+  // Update the breadcrumb based on the current section
+  const breadcrumb = document.querySelector('.breadcrumbs');
+  
+  // Check the sectionId and adjust breadcrumb and active sidebar menu
+  if (sectionId.startsWith('getting-started')) {
+    breadcrumb.innerHTML = '<a href="index.html">Home</a> > <a href="#">Getting Started</a> > <span>' + menuName + '</span>';
+    document.querySelector('.sidebar a[href="javascript:void(0)"][onclick="showContent(event, \'getting-started\', \'\')"]').classList.add('active');
+    setActiveSubMenu('getting-started');
+  } else if (sectionId.startsWith('homeing-main')) {
+    breadcrumb.innerHTML = '<a href="index.html">Home</a> > <a href="#">Personal Housing</a> > <span>' + menuName + '</span>';
+    document.querySelector('.sidebar a[href="javascript:void(0)"][onclick="showContent(event, \'homeing-main\', \'Personal Housing\')"]').classList.add('active');
+    setActiveSubMenu('homeing-main');
+  } else if (sectionId.startsWith('items-currency')) {
+    breadcrumb.innerHTML = '<a href="index.html">Home</a> > <a href="#">Items & Currency</a> > <span>' + menuName + '</span>';
+    document.querySelector('.sidebar a[href="javascript:void(0)"][onclick="showContent(event, \'items-currency\', \'Items & Currency\')"]').classList.add('active');
+    setActiveSubMenu('items-currency');
+  } else if (sectionId.startsWith('server-rewards')) {
+    breadcrumb.innerHTML = '<a href="index.html">Home</a> > <a href="#">Server Rewards Setup</a> > <span>' + menuName + '</span>';
+    document.querySelector('.sidebar a[href="javascript:void(0)"][onclick="showContent(event, \'server-rewards\', \'Server Rewards Setup\')"]').classList.add('active');
+    setActiveSubMenu('server-rewards');
+  } else if (sectionId.startsWith('server-management')) {
+    breadcrumb.innerHTML = '<a href="index.html">Home</a> > <a href="#">Server Management</a> > <span>' + menuName + '</span>';
+    document.querySelector('.sidebar a[href="javascript:void(0)"][onclick="showContent(event, \'server-management\', \'Server Management\')"]').classList.add('active');
+    setActiveSubMenu('server-management');
+  } else if (sectionId.startsWith('profile-settings')) {
+    breadcrumb.innerHTML = '<a href="index.html">Home</a> > <a href="#">Profile Settings</a> > <span>' + menuName + '</span>';
+    document.querySelector('.sidebar a[href="javascript:void(0)"][onclick="showContent(event, \'profile-settings\', \'Profile Settings\')"]').classList.add('active');
+    setActiveSubMenu('profile-settings');
+  } else if (sectionId.startsWith('getting-active-switching')) {
+    breadcrumb.innerHTML = '<a href="index.html">Home</a> > <a href="#">How to earn credits and tokens</a> > <span>' + menuName + '</span>';
+    document.querySelector('.sidebar a[href="javascript:void(0)"][onclick="showContent(event, \'getting-started\', \'\')"]').classList.add('active');
+    document.querySelector('.sidebar a[href="javascript:void(0)"][onclick="showContent(event, \'getting-active-switching\', \'How to earn credits and tokens\')"]').classList.add('active');
+    setActiveSubMenu('getting-active-switching');
+  } else if (sectionId.startsWith('getting-tatsugotchi-play')) {
+    breadcrumb.innerHTML = '<a href="index.html">Home</a> > <a href="#">How to play Tatsugotchi</a> > <span>' + menuName + '</span>';
+    document.querySelector('.sidebar a[href="javascript:void(0)"][onclick="showContent(event, \'getting-started\', \'\')"]').classList.add('active');
+    document.querySelector('.sidebar a[href="javascript:void(0)"][onclick="showContent(event, \'getting-tatsugotchi-play\', \'How to play Tatsugotchi\')"]').classList.add('active');
+    setActiveSubMenu('getting-tatsugotchi-play');
+  } else if (sectionId.startsWith('personal-housing-custom')) {
+    breadcrumb.innerHTML = '<a href="index.html">Home</a> > <a href="#">Personal Housing</a> > <span>Customizing your House</span>';
+    document.querySelector('.sidebar a[href="javascript:void(0)"][onclick="showContent(event, \'homeing-main\', \'Personal Housing\')"]').classList.add('active');
+    document.querySelector('.sidebar a[href="javascript:void(0)"][onclick="showContent(event, \'personal-housing-custom\', \'Customizing your House\')"]').classList.add('active');
+    setActiveSubMenu('personal-housing-custom');
+} else if (sectionId.startsWith('create-server-item')) {
+    breadcrumb.innerHTML = '<a href="index.html">Home</a> > <a href="#">Items & Currency</a> > <span>How to create a server item</span>';
+    document.querySelector('.sidebar a[href="javascript:void(0)"][onclick="showContent(event, \'items-currency\', \'Items & Currency\')"]').classList.add('active');
+    document.querySelector('.sidebar a[href="javascript:void(0)"][onclick="showContent(event, \'create-server-item\', \'How to create a server item\')"]').classList.add('active');
+    setActiveSubMenu('create-server-item');
+} else if (sectionId.startsWith('set-up-chat-level-role')) {
+    breadcrumb.innerHTML = '<a href="index.html">Home</a> > <a href="#">Server Rewards Setup</a> > <span>How to set up chat activity roles / leveled roles</span>';
+    document.querySelector('.sidebar a[href="javascript:void(0)"][onclick="showContent(event, \'server-rewards\', \'Server Rewards Setup\')"]').classList.add('active');
+    document.querySelector('.sidebar a[href="javascript:void(0)"][onclick="showContent(event, \'set-up-chat-level-role\', \'How to set up chat activity roles / leveled roles\')"]').classList.add('active');
+    setActiveSubMenu('set-up-chat-level-role');
+} else if (sectionId.startsWith('management-reaction-roles')) {
+    breadcrumb.innerHTML = '<a href="index.html">Home</a> > <a href="#">Server Management</a> > <span>How to set up reaction roles</span>';
+    document.querySelector('.sidebar a[href="javascript:void(0)"][onclick="showContent(event, \'server-management\', \'Server Management\')"]').classList.add('active');
+    document.querySelector('.sidebar a[href="javascript:void(0)"][onclick="showContent(event, \'management-reaction-roles\', \'How to set up reaction roles\')"]').classList.add('active');
+    setActiveSubMenu('management-reaction-roles');
+} else if (sectionId.startsWith('management-selfroles')) {
+    breadcrumb.innerHTML = '<a href="index.html">Home</a> > <a href="#">Server Management</a> > <span>How to set up selfroles</span>';
+    document.querySelector('.sidebar a[href="javascript:void(0)"][onclick="showContent(event, \'server-management\', \'Server Management\')"]').classList.add('active');
+    document.querySelector('.sidebar a[href="javascript:void(0)"][onclick="showContent(event, \'management-selfroles\', \'How to set up selfroles\')"]').classList.add('active');
+    setActiveSubMenu('management-selfroles');
+} else if (sectionId.startsWith('management-give-new-users-role')) {
+    breadcrumb.innerHTML = '<a href="index.html">Home</a> > <a href="#">Server Management</a> > <span>Give new users a role when they join your server</span>';
+    document.querySelector('.sidebar a[href="javascript:void(0)"][onclick="showContent(event, \'server-management\', \'Server Management\')"]').classList.add('active');
+    document.querySelector('.sidebar a[href="javascript:void(0)"][onclick="showContent(event, \'management-give-new-users-role\', \'Give new users a role when they join your server\')"]').classList.add('active');
+    setActiveSubMenu('management-give-new-users-role');
+} else if (sectionId.startsWith('profile-wallet-card-background')) {
+    breadcrumb.innerHTML = '<a href="index.html">Home</a> > <a href="#">Profile Settings</a> > <span>Changing your wallet card background</span>';
+    document.querySelector('.sidebar a[href="javascript:void(0)"][onclick="showContent(event, \'profile-settings\', \'Profile Settings\')"]').classList.add('active');
+    document.querySelector('.sidebar a[href="javascript:void(0)"][onclick="showContent(event, \'profile-wallet-card-background\', \'Changing your wallet card background\')"]').classList.add('active');
+    setActiveSubMenu('profile-wallet-card-background');
+} else if (sectionId.startsWith('profile-rank-card-background')) {
+    breadcrumb.innerHTML = '<a href="index.html">Home</a> > <a href="#">Profile Settings</a> > <span>Changing your rank card background</span>';
+    document.querySelector('.sidebar a[href="javascript:void(0)"][onclick="showContent(event, \'profile-settings\', \'Profile Settings\')"]').classList.add('active');
+    document.querySelector('.sidebar a[href="javascript:void(0)"][onclick="showContent(event, \'profile-rank-card-background\', \'Changing your rank card background\')"]').classList.add('active');
+    setActiveSubMenu('profile-rank-card-background');
+} else if (sectionId.startsWith('profile-level-up-card-background')) {
+    breadcrumb.innerHTML = '<a href="index.html">Home</a> > <a href="#">Profile Settings</a> > <span>Changing your level-up card background</span>';
+    document.querySelector('.sidebar a[href="javascript:void(0)"][onclick="showContent(event, \'profile-settings\', \'Profile Settings\')"]').classList.add('active');
+    document.querySelector('.sidebar a[href="javascript:void(0)"][onclick="showContent(event, \'profile-level-up-card-background\', \'Changing your level-up card background\')"]').classList.add('active');
+    setActiveSubMenu('profile-level-up-card-background');
+} else if (sectionId.startsWith('profile-profile-card-background')) {
+    breadcrumb.innerHTML = '<a href="index.html">Home</a> > <a href="#">Profile Settings</a> > <span>Changing your profile card background</span>';
+    document.querySelector('.sidebar a[href="javascript:void(0)"][onclick="showContent(event, \'profile-settings\', \'Profile Settings\')"]').classList.add('active');
+    document.querySelector('.sidebar a[href="javascript:void(0)"][onclick="showContent(event, \'profile-profile-card-background\', \'Changing your profile card background\')"]').classList.add('active');
+    setActiveSubMenu('profile-profile-card-background');
+}
+}
+
+// Function to handle expandable menus
+const submenuItems = document.querySelectorAll('.menu-item');
+submenuItems.forEach(item => {
+  item.addEventListener('click', function () {
+    const submenu = this.nextElementSibling;
+    if (submenu && submenu.classList.contains('sub-menu')) {
+      submenu.classList.toggle('open'); // This toggles the submenu visibility
+    }
+  });
+});
+</script>
+
+</body>
+</html>
