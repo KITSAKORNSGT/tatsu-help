@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Tatsugotchi Documentation</title>
+  <title>คู่มือการใช้งาน | Tatsu</title>
     <link rel="icon" href="images/tap1.png" type="image/png">
   <style>
   body {
@@ -11,9 +11,9 @@
   background: url('images/bg.png') no-repeat center center fixed;
   background-size: cover;
   color: #adbac7;
-  display: flex;
-  min-height: 100vh;
-  margin: 0;
+  display: flex; /* แสดงเนื้อหาเป็นแนวนอน */
+  min-height: 100vh; 
+  margin: 0; /* ลบ margin ที่มากับ body */
   box-sizing: border-box;
   padding: 0;
   overflow-x: hidden; /* ซ่อนการเลื่อนซ้ายขวา */
@@ -322,7 +322,52 @@ html {
   animation-fill-mode: both; /* ให้ animation ทำการเติมเต็ม */
 }
 
+
+.brush-frame {
+            display: inline-block;
+            margin-left: 170px;
+            width: 500px; /* กำหนดขนาดของ brush frame ให้ใหญ่ขึ้น */
+            height: 300px; /* กำหนดขนาดของ brush frame ให้ใหญ่ขึ้น */
+            border-radius: 8px;
+            position: relative;
+            background: 
+                linear-gradient(#202124, #202124), /* สีพื้นหลังที่ต้องการ */
+                url('bfpng12.png') no-repeat center/cover; /* brush ที่จะใส่สี */
+            background-blend-mode: lighten; /* ทำให้สีพื้นหลังผสมกับ brush */
+            background-size: 100% 100%;
+        }
+
+        .brush-frame img {
+            display: block;
+            width: 100%; /* ปรับขนาดรูปภาพตามขนาดของ brush frame */
+            height: 100%; /* ปรับขนาดรูปภาพตามขนาดของ brush frame */
+            border-radius: 8px;
+            mask-image: url('bfpng12.png');
+            -webkit-mask-image: url('bfpng12.png');
+            mask-size: 100% 100%;
+            -webkit-mask-size: 100% 100%;
+        }
+
 @media (max-width: 768px) {
+
+  .brush-frame {
+            display: inline-block;
+            margin-left: 0px;
+            width: 340px; /* กำหนดขนาดของ brush frame ให้ใหญ่ขึ้น */
+            height: 200px; /* กำหนดขนาดของ brush frame ให้ใหญ่ขึ้น */
+            border-radius: 8px;
+            position: relative;
+            background-size: 50% 50%;
+        }
+
+        .brush-frame img {
+            display: block;
+            width: 100%; /* ปรับขนาดรูปภาพตามขนาดของ brush frame */
+            height: 100%; /* ปรับขนาดรูปภาพตามขนาดของ brush frame */
+            border-radius: 8px;
+            mask-size: 100% 100%;
+            -webkit-mask-size: 100% 100%;
+        }
 
   .content {
   flex: 1;
@@ -438,8 +483,13 @@ html {
     
       <!-- Getting Started Section -->
       <div id="getting-started" class="content-section">
+        <hr class="divider">
+       
         <h1>Getting Started</h1>
         <p>Welcome to Tatsugotchi! Here's how to get started...</p>
+        <div class="brush-frame "> 
+            <img src="New_Gacha_Environment_Compressed (1).gif" alt="Your Image">
+      </div>
         <hr class="divider">
         <div class="nav-buttons">
           <button onclick="showContent(event, 'getting-started', '')">🏠︎</button>
